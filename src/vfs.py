@@ -10,6 +10,11 @@ class VFSNode:
         self.owner = owner
         self.children = {}  # name -> VFSNode
 
+    def get_size(self) -> int:
+        if not self.is_dir:
+            return len(self.content.encode('utf-8'))
+        return sum(child.get_size() for child in self.children.values())
+
 class VFS:
     def __init__(self):
         self.root = VFSNode("/", is_dir=True)
@@ -86,9 +91,9 @@ class VFS:
     def list_dir(self, path: str = "") -> str:
         node = self.resolve_path(path) if path else self.current
         if node is None:
-            return f"Ошибка: путь не найден: {path}"
+            return f"ls: невозможно получить доступ к '{path}': Нет такого файла или каталога"
         if not node.is_dir:
-            return f"Ошибка: это не директория: {path}"
+            return f"d  {node.owner:10}  {node.name}"
 
         if not node.children:
             return "(пустая директория)"
@@ -101,18 +106,61 @@ class VFS:
 
     def change_dir(self, path: str) -> str:
         if not path:
-            return "Ошибка: не указан путь"
+            return "cd: не указан путь"
 
         node = self.resolve_path(path)
         if node is None:
-            return f"Ошибка: путь не найден: {path}"
+            return f"cd: {path}: Нет такого файла или каталога"
         if not node.is_dir:
-            return f"Ошибка: это не директория: {path}"
+            return f"cd: {path}: Не является каталогом"
 
         self.current = node
-        if path.startswith("/"):
-            self.current_path = path.rstrip("/") or "/"
-        else:
-            self.current_path = (self.current_path.rstrip("/") + "/" + path).replace("//", "/")
 
+        if path.startswith("/"):
+            raw_path = path
+        else:
+            raw_path = self.current_path.rstrip("/") + "/" + path
+
+        parts = []
+        for p in raw_path.split("/"):
+            if p == "" or p == ".":
+                continue
+            if p == "..":
+                if parts:
+                    parts.pop()
+            else:
+                parts.append(p)
+
+        self.current_path = "/" + "/".join(parts)
         return f"Текущая директория: {self.current_path}"
+
+    def du(self, path: str = "") -> str:
+        target = self.resolve_path(path) if path else self.current
+        if target is None:
+            return f"du: невозможно получить доступ к '{path}': Нет такого файла или каталога"
+
+        lines = []
+        if target.is_dir:
+            for name, child in target.children.items():
+                lines.append(f"{child.get_size()}\t{name}")
+            lines.append(f"{target.get_size()}\t.")
+        else:
+            lines.append(f"{target.get_size()}\t{target.name}")
+        return "\n".join(lines)
+
+    def wc(self, path: str) -> str:
+        if not path:
+            return "wc: не указан файл"
+
+        node = self.resolve_path(path)
+        if node is None:
+            return f"wc: {path}: Нет такого файла или каталога"
+        if node.is_dir:
+            return f"wc: {path}: Это каталог"
+
+        content = node.content
+        lines_count = len(content.splitlines()) if content else 0
+        words_count = len(content.split()) if content else 0
+        bytes_count = len(content.encode('utf-8'))
+
+        return f"  {lines_count}  {words_count} {bytes_count} {node.name}"
