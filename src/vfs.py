@@ -164,3 +164,34 @@ class VFS:
         bytes_count = len(content.encode('utf-8'))
 
         return f"  {lines_count}  {words_count} {bytes_count} {node.name}"
+
+    def touch(self, filename: str) -> str:
+        if not filename:
+            return "touch: не указано имя файла"
+
+        if "/" in filename:
+            parent_path, name = filename.rsplit("/", 1)
+            parent_node = self.resolve_path(parent_path if parent_path else "/")
+        else:
+            parent_node = self.current
+            name = filename
+
+        if parent_node is None or not parent_node.is_dir:
+            return f"touch: невозможно создать файл '{filename}': Нет такого файла или каталога"
+
+        if name in parent_node.children:
+            return ""  # В UNIX touch для существующего файла просто обновляет время доступа
+
+        parent_node.children[name] = VFSNode(name, is_dir=False, content="", owner="root")
+        return ""
+
+    def chown(self, new_owner: str, path: str) -> str:
+        if not new_owner or not path:
+            return "chown: не указаны параметры (использование: chown OWNER PATH)"
+
+        node = self.resolve_path(path)
+        if node is None:
+            return f"chown: не удалось получить доступ к '{path}': Нет такого файла или каталога"
+
+        node.owner = new_owner
+        return ""

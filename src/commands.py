@@ -33,6 +33,20 @@ def cmd_wc(args: list[str]) -> str:
 def cmd_echo(args: list[str]) -> str:
     return " ".join(args)
 
+def cmd_touch(args: list[str]) -> str:
+    if vfs is None:
+        return "touch: VFS не загружена"
+    if not args:
+        return "touch: не указан файл"
+    return vfs.touch(args[0])
+
+def cmd_chown(args: list[str]) -> str:
+    if vfs is None:
+        return "chown: VFS не загружена"
+    if len(args) < 2:
+        return "chown: пропущен операнд после владельца"
+    return vfs.chown(args[0], args[1])
+
 def cmd_exit(args: list[str]) -> str:
     return "EXIT"
 
@@ -43,6 +57,8 @@ def execute_command(command: str, args: list[str]) -> str:
         "du": cmd_du,
         "wc": cmd_wc,
         "echo": cmd_echo,
+        "touch": cmd_touch,
+        "chown": cmd_chown,
         "exit": cmd_exit,
     }
 
