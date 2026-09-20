@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vfs name="medium">
-    <directory name="/">
-        <file name="file1.txt" owner="user" content="Content of file1" />
-        <file name="file2.txt" owner="user" content="Content of file2" />
-        <directory name="docs">
-            <file name="doc1.txt" owner="root" content="Document 1" />
+    <directory name="/" owner="root">
+        <directory name="docs" owner="root">
+            <file name="doc1.txt" owner="root" content="Документ VFS" />
         </directory>
+        <file name="file1.txt" owner="user" content="Hello VFS World!" />
+        <file name="file2.txt" owner="user" content="Второй файл" />
+        <file name="encoded.bin" owner="root" encoding="base64" content="U0hFTEwgRU1VTEFUT1I=" />
     </directory>
 </vfs>
