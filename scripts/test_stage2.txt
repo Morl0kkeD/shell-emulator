@@ -1,0 +1,6 @@
+ls
+ls "моя папка"
+cd /home
+неизвестная_команда
+cd "Documents"
+ls
