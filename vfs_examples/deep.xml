@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfs name="deep">
+    <directory name="/">
+        <directory name="home">
+            <directory name="user">
+                <directory name="documents">
+                    <file name="report.txt" owner="user" content="Deep report content" />
+                    <file name="notes.txt" owner="user" content="Some notes" />
+                </directory>
+                <file name="profile.txt" owner="user" content="User profile" />
+            </directory>
+        </directory>
+        <file name="motd" owner="root" content="Welcome to deep VFS" />
+    </directory>
+</vfs>

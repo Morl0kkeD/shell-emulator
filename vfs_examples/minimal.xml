@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfs name="minimal">
+    <directory name="/">
+        <file name="readme.txt" owner="root" content="Hello from minimal VFS" />
+    </directory>
+</vfs>

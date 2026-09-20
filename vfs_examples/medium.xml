@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfs name="medium">
+    <directory name="/">
+        <file name="file1.txt" owner="user" content="Content of file1" />
+        <file name="file2.txt" owner="user" content="Content of file2" />
+        <directory name="docs">
+            <file name="doc1.txt" owner="root" content="Document 1" />
+        </directory>
+    </directory>
+</vfs>

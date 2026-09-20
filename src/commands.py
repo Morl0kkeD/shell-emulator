@@ -1,23 +1,26 @@
-def cmd_ls(args: list[str]) -> str:
-    """Заглушка команды ls"""
-    return f"ls: {args}"
+vfs = None
 
+def set_vfs(v):
+    global vfs
+    vfs = v
+
+def cmd_ls(args: list[str]) -> str:
+    if vfs is None:
+        return "ls: VFS не загружена"
+    path = args[0] if args else ""
+    return vfs.list_dir(path)
 
 def cmd_cd(args: list[str]) -> str:
-    """Заглушка команды cd"""
-    return f"cd: {args}"
-
+    if vfs is None:
+        return "cd: VFS не загружена"
+    if not args:
+        return "Ошибка: не указан путь"
+    return vfs.change_dir(args[0])
 
 def cmd_exit(args: list[str]) -> str:
-    """Команда выхода"""
     return "EXIT"
 
-
 def execute_command(command: str, args: list[str]) -> str:
-    """
-    Выполняет команду.
-    Возвращает текст результата или 'EXIT'.
-    """
     commands = {
         "ls": cmd_ls,
         "cd": cmd_cd,
